@@ -54,9 +54,9 @@
 - name: set the macOS default driver
   set_fact:
     minikube_driver: hyperkit
-  when: ansible_os_family == "Darwin" && minikube_driver_override is not defined
+  when: ansible_os_family == "Darwin" and minikube_driver_override is not defined
 
 - name: set the linux default driver
   set_fact:
     minikube_driver: kvm2
-  when: (ansible_os_family == "RedHat" or ansible_os_family == "CentOS" or ansible_os_family == "Debian") && minikube_driver_override is not defined
+  when: (ansible_os_family == "RedHat" or ansible_os_family == "CentOS" or ansible_os_family == "Debian") and minikube_driver_override is not defined
