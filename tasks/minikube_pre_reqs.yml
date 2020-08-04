@@ -1,0 +1,62 @@
+---
+- name: Create minikube Home Dir
+  file:
+    state: directory 
+    name: "{{item}}"
+  loop:
+    - "{{minikube_home_dir}}"
+
+- name: Check if minikube is installed
+  command:
+    argv:
+      - minikube
+      - version
+  register: minikube_result
+  ignore_errors: True
+  changed_when: False
+
+- name: Set minikube macOS download binary
+  set_fact:
+      minikube_download_binary: "https://github.com/kubernetes/minikube/releases/download/{{minikube_version}}/minikube-darwin-amd64"
+  when: minikube_result.rc != 0 and ansible_os_family == "Darwin"
+
+- name: Set minikube Linux download binary
+  set_fact:
+      minikube_download_binary: "https://github.com/kubernetes/minikube/releases/download/{{minikube_version}}/minikube-linux-amd64"
+  when: minikube_result.rc != 0 and (ansible_os_family == "RedHat" or ansible_os_family == "CentOS" or ansible_os_family == "Debian")
+
+- name: Set minikube Windows download binary
+  set_fact:
+      minikube_download_binary: "https://github.com/kubernetes/minikube/releases/download/{{minikube_version}}/minikube-windows-amd64"
+  when: minikube_result.rc != 0 and ansible_os_family == "Windows"
+
+- name: Create user local bin directory 
+  file:
+    path: /usr/local/bin
+    state: directory
+  become: yes
+  become_user: root
+  when: minikube_result.rc != 0
+
+- name: Download minikube binary
+  get_url:
+    url: "{{minikube_download_binary}}"
+    dest: "/usr/local/bin/minikube"
+    mode: "0755"
+  become: yes
+  when: minikube_result.rc != 0
+  register: downloaded_minikube
+
+- name: set minikube binary fact
+  set_fact:
+    minikube_binary: /usr/local/bin/minikube
+
+- name: set the macOS default driver
+  set_fact:
+    driver: hyperkit
+  when: ansible_os_family == "Darwin"
+
+- name: set the linux default driver
+  set_fact:
+    driver: kvm2
+  when: ansible_os_family == "RedHat" or ansible_os_family == "CentOS" or ansible_os_family == "Debian"

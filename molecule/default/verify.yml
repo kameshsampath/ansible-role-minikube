@@ -1,0 +1,16 @@
+---
+- name: Verify
+  hosts: localhost
+  connection: local
+
+  vars:
+   ansible_python_interpreter: '{{ ansible_playbook_python }}'
+   minikube_profile_name: molecule
+   minikube_version:  v1.12.1
+
+  tasks:
+
+  - import_tasks: ../common/verify_tasks.yml
+
+- name: Destroy test resources
+  import_playbook: destroy.yml

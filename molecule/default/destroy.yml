@@ -1,0 +1,22 @@
+---
+- name: Destroy 'default' test resources
+  hosts: localhost
+  connection: local
+
+  vars:
+    ansible_python_interpreter: '{{ ansible_playbook_python }}'
+    minikube_profile_name: molecule
+  tasks:
+    - name: "Delete minikube profile {{minikube_profile_name}}"
+      command:
+        argv:
+          - minikube
+          - -p
+          - "{{minikube_profile_name}}"
+          - delete
+      register: delete_test_res
+    - name: Fail when not cleaned 
+      fail:
+        msg: "Error while deleting test resources"
+      when: delete_test_res.rc != 0
+      

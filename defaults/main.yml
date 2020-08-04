@@ -1,0 +1,13 @@
+---
+minikube_version: v1.12.1
+minikube_home_dir: "{{ansible_env.HOME}}/.minikube"
+minikube_create: True
+minikube_driver: docker
+minikube_profile_name: minikube
+minikube_memory: 8g
+minikube_cpus: 4
+minikube_disk_size: 50g
+minikube_addons:
+ - registry
+ - registry-aliases
+minikube_destroy: False
