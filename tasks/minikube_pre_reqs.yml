@@ -7,36 +7,54 @@
     - "{{minikube_home_dir}}"
 
 - name: Check if minikube is installed
+  stat:
+    path: /usr/local/bin/minikube
+  register: minikube_stat_result
+  changed_when: False
+
+- name: "Check for minikube updates"
   command:
     argv:
-      - minikube
-      - version
+      - "{{minikube_stat_result.stat.path}}"
+      - update-check
   register: minikube_result
-  ignore_errors: True
-  changed_when: False
+  when: minikube_stat_result.stat.exists
+
+- name: Set minikube versions
+  set_fact: 
+    current_version: "{{ minikube_result.stdout_lines[0] | regex_search('v\\d+.\\d+.\\d+') }}"
+    new_version: "{{ minikube_result.stdout_lines[1] | regex_search('v\\d+.\\d+.\\d+') }}"
+  when: minikube_result is defined and minikube_result.rc == 0 and minikube_result.stdout_lines
+
+- name: Minikube Version Check
+  debug: 
+     msg: "Current Version {{current_version}}, New Version: {{new_version}}"
+
+- name: Set minikube current and update versions
+  set_fact:
+    need_to_download: '{{ not minikube_stat_result.stat.exists or current_version is version(new_version,"<",strict=False)}}'
 
 - name: Set minikube macOS download binary
   set_fact:
       minikube_download_binary: "https://github.com/kubernetes/minikube/releases/download/{{minikube_version}}/minikube-darwin-amd64"
-  when: minikube_result.rc != 0 and ansible_os_family == "Darwin"
+  when: need_to_download  and ansible_os_family == "Darwin"
 
 - name: Set minikube Linux download binary
   set_fact:
       minikube_download_binary: "https://github.com/kubernetes/minikube/releases/download/{{minikube_version}}/minikube-linux-amd64"
-  when: minikube_result.rc != 0 and (ansible_os_family == "RedHat" or ansible_os_family == "CentOS" or ansible_os_family == "Debian")
+  when: need_to_download and (ansible_os_family == "RedHat" or ansible_os_family == "CentOS" or ansible_os_family == "Debian")
 
 - name: Set minikube Windows download binary
   set_fact:
       minikube_download_binary: "https://github.com/kubernetes/minikube/releases/download/{{minikube_version}}/minikube-windows-amd64"
-  when: minikube_result.rc != 0 and ansible_os_family == "Windows"
+  when: need_to_download and ansible_os_family == "Windows"
 
 - name: Create user local bin directory 
   file:
     path: /usr/local/bin
     state: directory
   become: yes
-  become_user: root
-  when: minikube_result.rc != 0
+  when: need_to_download
 
 - name: Download minikube binary
   get_url:
@@ -44,12 +62,13 @@
     dest: "/usr/local/bin/minikube"
     mode: "0755"
   become: yes
-  when: minikube_result.rc != 0
+  when: need_to_download
   register: downloaded_minikube
 
 - name: set minikube binary fact
   set_fact:
     minikube_binary: /usr/local/bin/minikube
+    minikube_version: "{{new_version}}"
 
 - name: set the macOS default driver
   set_fact:
