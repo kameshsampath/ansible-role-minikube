@@ -1,6 +1,5 @@
 ---
 roles:
-  - name: kameshsampath.k8s_app_spices
-collections:
-  - name: community.kubernetes
-    version: 0.11.1
+  - name: kameshsampath.minikube
+    src: https://github.com/kameshsampath/kameshsampath.minikube
+    version: master

@@ -34,6 +34,11 @@
   set_fact:
     need_to_download: '{{ not minikube_stat_result.stat.exists or current_version is version(new_version,"<",strict=False)}}'
 
+- name: set minikube version fact
+  set_fact:
+    minikube_version: "{{new_version}}"
+  when: current_version is version(new_version,"<",strict=False)
+
 - name: Set minikube macOS download binary
   set_fact:
       minikube_download_binary: "https://github.com/kubernetes/minikube/releases/download/{{minikube_version}}/minikube-darwin-amd64"
@@ -61,14 +66,10 @@
     url: "{{minikube_download_binary}}"
     dest: "/usr/local/bin/minikube"
     mode: "0755"
+    force: yes
   become: yes
   when: need_to_download
   register: downloaded_minikube
-
-- name: set minikube binary fact
-  set_fact:
-    minikube_binary: /usr/local/bin/minikube
-    minikube_version: "{{new_version}}"
 
 - name: set the macOS default driver
   set_fact:
@@ -79,3 +80,7 @@
   set_fact:
     minikube_driver: kvm2
   when: (ansible_os_family == "RedHat" or ansible_os_family == "CentOS" or ansible_os_family == "Debian") and minikube_driver_override is not defined
+
+- name: set minikube binary fact
+  set_fact:
+    minikube_binary: /usr/local/bin/minikube

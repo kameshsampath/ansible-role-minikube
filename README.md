@@ -1,11 +1,8 @@
-Ansible role for minikube
-=====================
+# Ansible role for minikube
 
-Ansible to create [minikube](https://kind.sigs.k8s.io) cluster. 
+Ansible to create [minikube](https://minikube.sigs.k8s.io) cluster. 
 
-
-Requirements
-------------
+## Requirements
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop) or Docker for Linux
 
@@ -13,14 +10,12 @@ Requirements
 
 ```shell
 pip3 install \
-  -r https://raw.githubusercontent.com/kameshsampath/ansible-role-kind/master/requirements.txt
-ansible-galaxy role install kameshsampath.kind
-ansible-galaxy collection install community.kubernetes
+  -r https://raw.githubusercontent.com/kameshsampath/kameshsampath.minikube/master/requirements.txt
+ansible-galaxy role install -r https://raw.githubusercontent.com/kameshsampath/kameshsampath.minikube/master/requirements.yml
 ```
 __NOTE__: For Windows its recommended to use Windows Subsystem for Linux (WSL)
 
-Role Variables
---------------
+## Role Variables
 
 | Variable Name| Description | Default |
 |--|--|--|
@@ -35,30 +30,33 @@ Role Variables
 | minikube_disk_size| The disk size to use for minikube | 50g |
 | minikube_addons| the addons to enable bu default | registry and registry-aliases |
 
-License
--------
+## Creating a minikube cluster
 
-[Apache v2](https://github.com/kameshsampath/ansible-role-kind/tree/master/LICENSE)
+```shell
+  ansible-galaxy role install -r 
+```
 
-Author Information
-------------------
+## License
+
+[Apache v2](https://github.com/kameshsampath/kameshsampath.minikube/tree/master/LICENSE)
+
+## Author Information
 
 [Kamesh Sampath](mailto:kamesh.sampath@hotmail.com)
 
-Issues
-=======
+## Issues
 
-[Issues](https://github.com/kameshsampath/ansible-role-kind/issues)
+[Issues](https://github.com/kameshsampath/kameshsampath.minikube/issues)
 
-Testing
-=======
+## Testing
 
-Requirements
-------------
+
+### Requirements
+
 - Extra Python modules
 ```shell
 pip3 install \
-  -r https://raw.githubusercontent.com/kameshsampath/ansible-role-kind/master/molecule/requirements.txt
+  -r https://raw.githubusercontent.com/kameshsampath/kameshsampath.minikube/master/molecule/requirements.txt
 ```
 
 All tests are built using [molecule](https://molecule.readthedocs.io/en/latest/index.html) with following scenarios:
