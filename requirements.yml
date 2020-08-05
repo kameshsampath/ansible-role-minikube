@@ -1,5 +1,3 @@
 ---
 roles:
   - name: kameshsampath.minikube
-    src: https://github.com/kameshsampath/kameshsampath.minikube
-    version: master

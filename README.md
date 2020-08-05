@@ -10,8 +10,8 @@ Ansible to create [minikube](https://minikube.sigs.k8s.io) cluster.
 
 ```shell
 pip3 install \
-  -r https://raw.githubusercontent.com/kameshsampath/kameshsampath.minikube/master/requirements.txt
-ansible-galaxy role install -r https://raw.githubusercontent.com/kameshsampath/kameshsampath.minikube/master/requirements.yml
+  -r https://raw.githubusercontent.com/kameshsampath/ansible-role-minikube/master/requirements.txt
+ansible-galaxy role install -r https://raw.githubusercontent.com/kameshsampath/ansible-role-minikube/master/requirements.yml
 ```
 __NOTE__: For Windows its recommended to use Windows Subsystem for Linux (WSL)
 
@@ -38,7 +38,7 @@ __NOTE__: For Windows its recommended to use Windows Subsystem for Linux (WSL)
 
 ## License
 
-[Apache v2](https://github.com/kameshsampath/kameshsampath.minikube/tree/master/LICENSE)
+[Apache v2](https://github.com/kameshsampath/ansible-role-minikube/tree/master/LICENSE)
 
 ## Author Information
 
@@ -46,7 +46,7 @@ __NOTE__: For Windows its recommended to use Windows Subsystem for Linux (WSL)
 
 ## Issues
 
-[Issues](https://github.com/kameshsampath/kameshsampath.minikube/issues)
+[Issues](https://github.com/kameshsampath/ansible-role-minikube/issues)
 
 ## Testing
 
@@ -56,7 +56,7 @@ __NOTE__: For Windows its recommended to use Windows Subsystem for Linux (WSL)
 - Extra Python modules
 ```shell
 pip3 install \
-  -r https://raw.githubusercontent.com/kameshsampath/kameshsampath.minikube/master/molecule/requirements.txt
+  -r https://raw.githubusercontent.com/kameshsampath/ansible-role-minikube/master/molecule/requirements.txt
 ```
 
 All tests are built using [molecule](https://molecule.readthedocs.io/en/latest/index.html) with following scenarios:

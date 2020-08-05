@@ -1,10 +1,10 @@
 ---
 - name: Create minikube Home Dir
   file:
-    state: directory 
-    name: "{{item}}"
+    state: directory
+    name: "{{ item }}"
   loop:
-    - "{{minikube_home_dir}}"
+    - "{{ minikube_home_dir }}"
 
 - name: Check if minikube is installed
   stat:
@@ -15,46 +15,46 @@
 - name: "Check for minikube updates"
   command:
     argv:
-      - "{{minikube_stat_result.stat.path}}"
+      - "{{ minikube_stat_result.stat.path }}"
       - update-check
   register: minikube_result
   when: minikube_stat_result.stat.exists
 
 - name: Set minikube versions
-  set_fact: 
+  set_fact:
     current_version: "{{ minikube_result.stdout_lines[0] | regex_search('v\\d+.\\d+.\\d+') }}"
     new_version: "{{ minikube_result.stdout_lines[1] | regex_search('v\\d+.\\d+.\\d+') }}"
   when: minikube_result is defined and minikube_result.rc == 0 and minikube_result.stdout_lines
 
 - name: Minikube Version Check
-  debug: 
-     msg: "Current Version {{current_version}}, New Version: {{new_version}}"
+  debug:
+     msg: "Current Version {{ current_version }}, New Version: {{ new_version }}"
 
 - name: Set minikube current and update versions
   set_fact:
-    need_to_download: '{{ not minikube_stat_result.stat.exists or current_version is version(new_version,"<",strict=False)}}'
+    need_to_download: '{{ not minikube_stat_result.stat.exists or current_version is version(new_version,"<" ,strict=False) }}'
 
 - name: set minikube version fact
   set_fact:
-    minikube_version: "{{new_version}}"
+    minikube_version: "{{ new_version }}"
   when: current_version is version(new_version,"<",strict=False)
 
 - name: Set minikube macOS download binary
   set_fact:
-      minikube_download_binary: "https://github.com/kubernetes/minikube/releases/download/{{minikube_version}}/minikube-darwin-amd64"
+      minikube_download_binary: "https://github.com/kubernetes/minikube/releases/download/{{ minikube_version }}/minikube-darwin-amd64"
   when: need_to_download  and ansible_os_family == "Darwin"
 
 - name: Set minikube Linux download binary
   set_fact:
-      minikube_download_binary: "https://github.com/kubernetes/minikube/releases/download/{{minikube_version}}/minikube-linux-amd64"
+      minikube_download_binary: "https://github.com/kubernetes/minikube/releases/download/{{ minikube_version }}/minikube-linux-amd64"
   when: need_to_download and (ansible_os_family == "RedHat" or ansible_os_family == "CentOS" or ansible_os_family == "Debian")
 
 - name: Set minikube Windows download binary
   set_fact:
-      minikube_download_binary: "https://github.com/kubernetes/minikube/releases/download/{{minikube_version}}/minikube-windows-amd64"
+      minikube_download_binary: "https://github.com/kubernetes/minikube/releases/download/{{ minikube_version }}/minikube-windows-amd64"
   when: need_to_download and ansible_os_family == "Windows"
 
-- name: Create user local bin directory 
+- name: Create user local bin directory
   file:
     path: /usr/local/bin
     state: directory
@@ -63,7 +63,7 @@
 
 - name: Download minikube binary
   get_url:
-    url: "{{minikube_download_binary}}"
+    url: "{{ minikube_download_binary }}"
     dest: "/usr/local/bin/minikube"
     mode: "0755"
     force: yes

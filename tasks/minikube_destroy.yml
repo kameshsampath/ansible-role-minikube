@@ -1,16 +1,15 @@
 ---
-
-- name: "Delete minikube cluster {{minikube_profile_name}}"
+- name: "Delete minikube cluster {{ minikube_profile_name }}"
   command:
     argv:
-      - "{{minikube_binary}}"
-      - -p 
-      - "{{minikube_profile_name}}"
+      - "{{ minikube_binary }}"
+      - -p
+      - "{{ minikube_profile_name }}"
       - delete
   register: delete_test_res
   changed_when: False
 
-- name: Fail when not cleaned 
+- name: Fail when not cleaned
   fail:
     msg: "Error while deleting minikube resources"
   when: delete_test_res.rc != 0

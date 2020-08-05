@@ -7,12 +7,13 @@
 - name: Get minikube Version
   command:
     argv:
-      - '{{minikube_dir_result.stat.path}}'
+      - '{{ minikube_dir_result.stat.path }}'
       - version
   register: minikube_version_out
   changed_when: False
 
-- set_fact: 
+- name: Set actual version
+  set_fact:
     actual_version: "{{ minikube_version_out.stdout | regex_search(minikube_version) }}"
 
 - name: Verify minikube version
@@ -24,20 +25,20 @@
     argv:
       - /usr/local/bin/minikube
       - -p
-      - "{{minikube_profile_name}}"
+      - "{{ minikube_profile_name }}"
       - addons
       - list
       - --output=json
   register: minikube_addons_json
   changed_when: False
-  
-- set_fact:
-    output_json: "{{minikube_addons_json.stdout|from_json}}"
-      
+
+- name: Set Minikube addons list as JSON
+  set_fact:
+    output_json: "{{ minikube_addons_json.stdout|from_json }}"
+
 - name: Verify addons status
   assert:
-    that: "{{output_json[item].Status == 'enabled'}}"
+    that: "{{ output_json[item].Status == 'enabled' }}"
   with_items:
     - registry
     - registry-aliases
-  
