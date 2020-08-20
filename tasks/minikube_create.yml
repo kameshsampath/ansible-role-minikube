@@ -17,23 +17,22 @@
 - name: Set existing profile name
   set_fact:
     profile_name: '{{ profile_check_result.stdout_lines | join("~") | regex_search(minikube_profile_name) }}'
-  when: no_profiles is not defined
 
-# - debug: msg="{{ profile_check_result }}" 
+# - debug: msg="{{ profile_name }}"
 
 - name: "Create minikube with profile {{ minikube_profile_name }}"
   command:
-      argv:
-        - "{{ minikube_binary }}"
-        - -p
-        - "{{ minikube_profile_name }}"
-        - start
-        # TODO #2 load the start up parameters from CLI
-        - --memory={{ minikube_memory }}
-        - --cpus={{ minikube_cpus }}
-        - --disk-size={{ minikube_disk_size }}
-        - --delete-on-failure=true
-        - --driver={{ minikube_driver }}
+    argv:
+      - "{{ minikube_binary }}"
+      - -p
+      - "{{ minikube_profile_name }}"
+      - start
+      # TODO #2 load the start up parameters from CLI
+      - --memory={{ minikube_memory }}
+      - --cpus={{ minikube_cpus }}
+      - --disk-size={{ minikube_disk_size }}
+      - --delete-on-failure=true
+      - --driver={{ minikube_driver }}
   register: minikube_start_result
   when: (no_profiles is defined and no_profiles | length > 0) or (profile_name is defined and profile_name | length == 0)
 
@@ -41,24 +40,24 @@
 
 - name: "Fail when not started"
   fail:
-   msg: "Unable to start minikube"
+    msg: "Unable to start minikube"
   when: minikube_start_result.rc is defined and minikube_start_result.rc != 0
 
 - name: "Set profile as current profile"
   command:
-     argv:
-       - "{{ minikube_binary }}"
-       - profile
-       - "{{ minikube_profile_name }}"
+    argv:
+      - "{{ minikube_binary }}"
+      - profile
+      - "{{ minikube_profile_name }}"
   changed_when: False
 
 - name: "Enabling addon"
   command:
-     argv:
-       - "{{ minikube_binary }}"
-       - addons
-       - enable
-       - "{{ item }}"
+    argv:
+      - "{{ minikube_binary }}"
+      - addons
+      - enable
+      - "{{ item }}"
   loop: "{{ minikube_addons }}"
   register: addons_enable_result
   changed_when: False
