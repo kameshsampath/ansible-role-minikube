@@ -24,7 +24,7 @@
   set_fact:
     current_version: "{{ minikube_result.stdout_lines[0] | regex_search('v\\d+.\\d+.\\d+') }}"
     new_version: "{{ minikube_result.stdout_lines[1] | regex_search('v\\d+.\\d+.\\d+') }}"
-  when: minikube_result is defined
+  when: minikube_result is defined and minikube_result.stdout_lines is defined
 
 - name: Minikube Version Check
   debug:
