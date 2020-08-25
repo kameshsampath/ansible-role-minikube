@@ -1,0 +1,8 @@
+{
+  "json.schemas": [],
+  "files.associations": {
+    "**/Dockerfile.j2": "dockerfile",
+    "**/*.yml": "ansible"
+  },
+  "python.pythonPath": "/Users/kameshs/.virtualenvs/ansible/bin/python",
+}
