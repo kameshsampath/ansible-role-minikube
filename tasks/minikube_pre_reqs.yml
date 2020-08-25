@@ -12,6 +12,10 @@
   register: minikube_stat_result
   changed_when: False
 
+- name: Download minikube binary
+  set_fact:
+    need_to_download: '{{ not minikube_stat_result.stat.exists }}'
+
 - name: "Check for minikube updates"
   command:
     argv:
@@ -31,9 +35,10 @@
      msg: "Current Version {{ current_version }}, New Version: {{ new_version }}"
   when: current_version is defined and new_version is defined
 
-- name: Set minikube current and update versions
+- name: Update minikube binary
   set_fact:
     need_to_download: '{{ not minikube_stat_result.stat.exists or current_version is version(new_version,"<" ,strict=False) }}'
+  when: current_version is defined and new_version is defined
 
 - name: set minikube version fact
   set_fact:
