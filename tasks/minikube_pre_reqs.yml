@@ -29,6 +29,7 @@
 - name: Minikube Version Check
   debug:
      msg: "Current Version {{ current_version }}, New Version: {{ new_version }}"
+  when: current_version is defined and new_version is defined
 
 - name: Set minikube current and update versions
   set_fact:
