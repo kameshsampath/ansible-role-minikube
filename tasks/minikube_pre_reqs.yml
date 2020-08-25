@@ -43,7 +43,7 @@
 - name: set minikube version fact
   set_fact:
     minikube_version: "{{ new_version }}"
-  when: current_version is version(new_version,"<",strict=False)
+  when: current_version is defined and  current_version is version(new_version,"<",strict=False)
 
 - name: Set minikube macOS download binary
   set_fact:
