@@ -11,3 +11,4 @@ minikube_addons:
  - registry
  - registry-aliases
 minikube_destroy: False
+minikube_service_cluster_ip_range: 10.96.10.0/27

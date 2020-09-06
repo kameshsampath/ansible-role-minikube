@@ -33,6 +33,8 @@
       - --disk-size={{ minikube_disk_size }}
       - --delete-on-failure=true
       - --driver={{ minikube_driver }}
+      - --insecure-registry="10.0.0.0/24"
+      - --service-cluster-ip-range={{ minikube_service_cluster_ip_range }}
   register: minikube_start_result
   when: (no_profiles is defined and no_profiles | length > 0) or (profile_name is defined and profile_name | length == 0)
 
