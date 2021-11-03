@@ -1,14 +1,19 @@
 ---
-minikube_version: v1.12.1
+minikube_version: v1.23.2
 minikube_home_dir: "{{ansible_env.HOME}}/.minikube"
 minikube_create: True
-minikube_driver: docker
-minikube_profile_name: minikube
-minikube_memory: 8g
-minikube_cpus: 4
-minikube_disk_size: 50g
-minikube_addons:
- - registry
- - registry-aliases
-minikube_destroy: False
+minikube_driver: hyperkit
+minikube_default_memory: 8g
+minikube_default_cpus: 4
+minikube_default_disk_size: 50g
+minikube_kubernetes_version: stable
 minikube_service_cluster_ip_range: 10.96.10.0/27
+minikube_profiles: 
+  minikube:
+    create: yes
+    destroy: no
+    addons:
+     - registry
+     - registry-aliases
+     - metallb
+profile_name_query: 'valid[*].Name'

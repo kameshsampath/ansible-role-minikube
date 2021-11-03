@@ -1,65 +1,83 @@
 ---
 - name: "Check if {{ minikube_profile_name }} already exists"
-  command:
+  ansible.builtin.command:
     argv:
-      - "{{ minikube_binary }}"
-      - "profile"
-      - "list"
+      - minikube
+      - profile
+      - list
+      - --light=true
+      - --output=json
   register: profile_check_result
   changed_when: False
   ignore_errors: true
 
+- name: "Set minikube profile JSON Facts"
+  set_fact:
+    minikube_profiles_json: "{{ profile_check_result.stdout | from_json }}"
+
 - name: Set if no profiles exist
   set_fact:
-    no_profiles: "{{ profile_check_result.stderr | regex_search('No minikube profile was found.*$') }}"
-  when: profile_check_result.stderr is defined
+    no_profiles: "{{ minikube_profiles_json.valid | length == 0 }}"
 
-- name: Set existing profile name
+- name: "Existing minikube profiles"
+  debug:
+    msg: "{{ minikube_profiles_json | json_query(profile_name_query) }}"
+  
+- name: "Set profiles to be created"
   set_fact:
-    profile_name: '{{ profile_check_result.stdout_lines | join("~") | regex_search(minikube_profile_name) }}'
+    minikube_profiles: "{{ minikube_profiles | combine( { item.key:{'create': ((not item.value.destroy) and ( item.key not in profile_names or no_profiles )) }}, recursive=True ) }}"
+  loop: "{{ minikube_profiles | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+  vars:
+    profile_names: "{{ minikube_profiles_json | json_query(profile_name_query) }}"
 
-# - debug: msg="{{ profile_name }}"
+- name: "Debug::Minikube Clusters Config"
+  debug:
+    var: minikube_profiles
 
-- name: "Create minikube with profile {{ minikube_profile_name }}"
+- name: "Create minikube Kubernetes Cluster"
   command:
     argv:
       - "{{ minikube_binary }}"
       - -p
-      - "{{ minikube_profile_name }}"
+      - "{{ item.key }}"
       - start
       # TODO #2 load the start up parameters from CLI
-      - --memory={{ minikube_memory }}
-      - --cpus={{ minikube_cpus }}
-      - --disk-size={{ minikube_disk_size }}
-      - --delete-on-failure=true
-      - --driver={{ minikube_driver }}
-      - --insecure-registry="10.0.0.0/24"
-      - --service-cluster-ip-range={{ minikube_service_cluster_ip_range }}
+      - "--memory={{ item.value.memory  | default(minikube_default_memory) }}"
+      - "--cpus={{ item.value.cpus | default(minikube_default_cpus) }}"
+      - "--disk-size={{ item.value.disk_size | default(minikube_default_disk_size) }}"
+      - "--delete-on-failure=true"
+      - "--driver={{ minikube_driver }}"
+      - "--insecure-registry=10.0.0.0/24"
+      - --kubernetes-version={{ kubernetes_version | default(minikube_kubernetes_version) }}
+      - "--service-cluster-ip-range={{ item.value.service_cluster_ip_range | default(minikube_service_cluster_ip_range) }}"
   register: minikube_start_result
-  when: (no_profiles is defined and no_profiles | length > 0) or (profile_name is defined and profile_name | length == 0)
+  loop: "{{ minikube_profiles | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+  when: (item.value.create | bool) and not ( item.value.destroy | bool )
 
-# - debug: msg="{{ minikube_start_result }}"
-
-- name: "Fail when not started"
+- name: "Fail when cluster not started"
   fail:
     msg: "Unable to start minikube"
-  when: minikube_start_result.rc is defined and minikube_start_result.rc != 0
-
-- name: "Set profile as current profile"
-  command:
-    argv:
-      - "{{ minikube_binary }}"
-      - profile
-      - "{{ minikube_profile_name }}"
-  changed_when: False
+  when: minikube_start_result.changed and item.rc != 0
+  loop: "{{ minikube_start_result.results }}"
+  loop_control:
+    label: "{{ item.item.key }}"
 
 - name: "Enabling addon"
-  command:
+  ansible.builtin.command:
     argv:
       - "{{ minikube_binary }}"
+      - -p
+      - "{{ item.0.key }}"
       - addons
       - enable
-      - "{{ item }}"
-  loop: "{{ minikube_addons }}"
+      - "{{ item.1 }}"
+  loop: "{{ minikube_profiles | dict2items | subelements('value.addons',skip_missing=True)}}"
   register: addons_enable_result
   changed_when: False
+  loop_control:
+    label: "Enabling addon '{{ item.1}}' on '{{ item.0.key }}'"
+  when: (item.0.value.create | bool) and not ( item.0.value.destroy | bool )

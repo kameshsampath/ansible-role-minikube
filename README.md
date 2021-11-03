@@ -22,13 +22,14 @@ __NOTE__: For Windows its recommended to use Windows Subsystem for Linux (WSL)
 | minikube_profile_name| Name of the minikube cluster| minikube |
 | minikube_create|  If True creates the cluster | True |
 | minikube_destroy| If True destroys the cluster | True |
-| minikube_version| The minikube version | v1.12.1 |
-| minikube_home_dir| The directory where KinD files will be stored | $HOME/.minikube |
-| minikube_driver| The minikube driver | docker|
+| minikube_version| The minikube version | v1.23.2 |
+| minikube_home_dir| The directory where minikube files will be stored | $HOME/.minikube |
+| minikube_driver| The minikube driver | hyperkit |
 | minikube_memory| The memory to use for minikube | 8g |
 | minikube_cpus| The cpus to use for minikube | 4 |
 | minikube_disk_size| The disk size to use for minikube | 50g |
-| minikube_addons| the addons to enable bu default | registry and registry-aliases |
+| minikube_addons| the addons to enable by default | registry and registry-aliases |
+| kubernetes-version| The kubernetes version to use | stable |
 
 ## Creating a minikube cluster
 

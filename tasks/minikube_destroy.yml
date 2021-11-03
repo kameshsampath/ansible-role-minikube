@@ -1,15 +1,26 @@
 ---
-- name: "Delete minikube cluster {{ minikube_profile_name }}"
-  command:
+- name: "Delete minikube cluster"
+  ansible.builtin.command:
     argv:
       - "{{ minikube_binary }}"
       - -p
-      - "{{ minikube_profile_name }}"
+      - "{{ item.key }}"
       - delete
   register: delete_test_res
   changed_when: False
+  loop: "{{ minikube_profiles | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+  when: (item.value.destroy | bool ) and not ( item.value.create | bool)
+
+- name: "Debug Delete Cluster"
+  debug:
+    var: delete_test_res
 
 - name: Fail when not cleaned
   fail:
     msg: "Error while deleting minikube resources"
-  when: delete_test_res.rc != 0
+  when: delete_test_res.changed and item.rc != 0
+  loop: "{{ delete_test_res.results }}"
+  loop_control:
+    label: "{{ item.item.key }}"

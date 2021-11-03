@@ -4,18 +4,15 @@
 ###################################
 - name: 'Check minikube Pre-req'
   include_tasks: minikube_pre_reqs.yml
-  when: minikube_create
 
 ###################################
 # Create
 ###################################
 - name: 'Create minikube {{ minikube_profile_name }} Cluster'
   include_tasks: minikube_create.yml
-  when: minikube_create
 
 ###################################
 # Destroy
 ###################################
 - name: 'Destroy minikube {{ minikube_profile_name }} Cluster'
   include_tasks: minikube_destroy.yml
-  when: minikube_destroy | default(False)
