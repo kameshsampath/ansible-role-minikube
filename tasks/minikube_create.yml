@@ -39,7 +39,7 @@
 - name: "Create Kubeconfig dir"
   file:
     state: directory
-    path: "{{ playbook_dir }}/.kube"
+    path: "{{ kubeconfig_dir }}"
 
 - name: "Create minikube Kubernetes Cluster"
   command:
@@ -62,7 +62,7 @@
   loop_control:
     label: "{{ item.key }}"
   environment:
-    KUBECONFIG: "{{ playbook_dir }}/.kube/{{ item.key }}.kubeconfig"
+    KUBECONFIG: "{{ kubeconfig_dir }}/{{ item.key }}.kubeconfig"
   when: (item.value.create | bool) and not ( item.value.destroy | bool )
 
 - name: "Fail when cluster not started"
@@ -72,6 +72,39 @@
   loop: "{{ minikube_start_result.results }}"
   loop_control:
     label: "{{ item.item.key }}"
+
+- name: "Check if local .kube directory exists"
+  stat:
+    path: "{{ kubeconfig_dir }}"
+  register: kubeconfig_dir_result
+
+- debug:
+    var: kubeconfig_dir_result
+
+- name: "Merge Kubconfig"
+  set_fact: 
+    kubeconfig: "{{ lookup('fileglob', kubeconfig_dir +'/*.kubeconfig') | regex_replace(',',':') }}"
+  when: kubeconfig_dir_result.stat.exists
+
+- name: "Merge and Flatten Kubeconfig"
+  local_action:
+    module: ansible.builtin.command
+    argv:
+      - kubectl 
+      - config
+      - view 
+      - --flatten
+  register: merged_kubeconfig
+  environment:
+      KUBECONFIG: "{{ kubeconfig  }}"
+  when: kubeconfig_dir_result.stat.exists
+
+- name: "Save work Kubeconfig"
+  local_action:
+    module: ansible.builtin.copy
+    dest: "{{ kubeconfig_dir }}/config"
+    content: "{{ merged_kubeconfig.stdout | from_yaml | to_nice_yaml(indent=2) }}"
+  when: kubeconfig_dir_result.stat.exists
 
 - name: "Enabling addon"
   ansible.builtin.command:

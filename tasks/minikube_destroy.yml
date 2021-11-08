@@ -15,12 +15,19 @@
 
 - name: "Cleanup kubeconfig files"
   ansible.builtin.file:
-    path: "{{ playbook_dir }}/.kube/{{ item.key }}.kubeconfig"
+    path: "{{ kubeconfig_dir }}/{{ item.key }}.kubeconfig"
     state: absent
   loop: "{{ minikube_profiles | dict2items }}"
   loop_control:
     label: "{{ item.key }}"
   when: (item.value.destroy | bool ) and not ( item.value.create | bool)
+  register: kubeconfig_cleanup
+
+- name: "Cleanup {{ kubeconfig_dir }}/config file"
+  ansible.builtin.file:
+    path: "{{ kubeconfig_dir }}/config"
+    state: absent
+  when: kubeconfig_cleanup.changed
   register: kubeconfig_cleanup
 
 - name: "Debug Delete Cluster"

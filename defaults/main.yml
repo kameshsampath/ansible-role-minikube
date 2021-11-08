@@ -18,3 +18,4 @@ minikube_profiles:
      - metallb
 profile_name_query: 'valid[*].Name'
 force_enable_addon: false
+kubeconfig_dir: "{{ playbook_dir }}/.kube"
