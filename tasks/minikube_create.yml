@@ -36,6 +36,11 @@
   debug:
     var: minikube_profiles
 
+- name: "Create Kubeconfig dir"
+  file:
+    state: directory
+    path: "{{ playbook_dir }}/.kube"
+
 - name: "Create minikube Kubernetes Cluster"
   command:
     argv:
@@ -56,6 +61,8 @@
   loop: "{{ minikube_profiles | dict2items }}"
   loop_control:
     label: "{{ item.key }}"
+  environment:
+    KUBECONFIG: "{{ playbook_dir }}/.kube/{{ item.key }}.kubeconfig"
   when: (item.value.create | bool) and not ( item.value.destroy | bool )
 
 - name: "Fail when cluster not started"
@@ -80,4 +87,6 @@
   changed_when: False
   loop_control:
     label: "Enabling addon '{{ item.1}}' on '{{ item.0.key }}'"
-  when: (item.0.value.create | bool) and not ( item.0.value.destroy | bool )
+  when:  ( ( item.0.value.create | bool ) and not ( item.0.value.destroy | bool ) ) or force_enable_addon
+  environment:
+    KUBECONFIG: "{{ playbook_dir }}/.kube/{{ item.0.key }}.kubeconfig"

@@ -62,18 +62,15 @@
 
 - name: Create user local bin directory
   file:
-    path: /usr/local/bin
+    path: "{{ ansible_env.HOME }}/.local/bin"
     state: directory
-  become: yes
   when: need_to_download
 
 - name: Download minikube binary
   get_url:
     url: "{{ minikube_download_binary }}"
-    dest: "/usr/local/bin/minikube"
+    dest: "{{ ansible_env.HOME }}/.local/bin/minikube"
     mode: "0755"
-    force: yes
-  become: yes
   when: need_to_download
   register: downloaded_minikube
 

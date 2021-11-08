@@ -13,11 +13,22 @@
     label: "{{ item.key }}"
   when: (item.value.destroy | bool ) and not ( item.value.create | bool)
 
+- name: "Cleanup kubeconfig files"
+  ansible.builtin.file:
+    path: "{{ playbook_dir }}/.kube/{{ item.key }}.kubeconfig"
+    state: absent
+  loop: "{{ minikube_profiles | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+  when: (item.value.destroy | bool ) and not ( item.value.create | bool)
+  register: kubeconfig_cleanup
+
 - name: "Debug Delete Cluster"
   debug:
     var: delete_test_res
-
-- name: Fail when not cleaned
+  when: kubeconfig_cleanup.changed
+  
+- name: "Fail when not cleaned"
   fail:
     msg: "Error while deleting minikube resources"
   when: delete_test_res.changed and item.rc != 0
