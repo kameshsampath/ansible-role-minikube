@@ -17,4 +17,4 @@ minikube_profiles:
      - registry-aliases
      - metallb
 profile_name_query: 'valid[*].Name'
-force_enable_addon: true
+force_enable_addon: false
