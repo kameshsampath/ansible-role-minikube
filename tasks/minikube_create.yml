@@ -1,5 +1,5 @@
 ---
-- name: "Check if {{ minikube_profile_name }} already exists"
+- name: "Query existing minikube clusters"
   ansible.builtin.command:
     argv:
       - minikube
@@ -11,26 +11,37 @@
   changed_when: False
   ignore_errors: true
 
+# - debug:
+#    var: profile_check_result
+
 - name: "Set minikube profile JSON Facts"
   set_fact:
     minikube_profiles_json: "{{ profile_check_result.stdout | from_json }}"
+  when: not profile_check_result.failed
 
-- name: Set if no profiles exist
+# - name: "Existing minikube profiles JSON"
+#   debug:
+#     var: minikube_profiles_json
+#   when: not profile_check_result.failed
+
+- name: "Set if no profiles exist"
   set_fact:
-    no_profiles: "{{ minikube_profiles_json.valid | length == 0 }}"
+    no_profiles: "{{ profile_check_result.failed or minikube_profiles_json.valid | length == 0 }}"
 
 - name: "Existing minikube profiles"
   debug:
     msg: "{{ minikube_profiles_json | json_query(profile_name_query) }}"
+  when: not profile_check_result.failed
   
 - name: "Set profiles to be created"
   set_fact:
-    minikube_profiles: "{{ minikube_profiles | combine( { item.key:{'create': ((not item.value.destroy) and ( item.key not in profile_names or no_profiles )) }}, recursive=True ) }}"
+    minikube_profiles: "{{ minikube_profiles | combine( { item.key:{'create': ((item.value.create and not item.value.destroy) and ( item.key not in profile_names or no_profiles )) }}, recursive=True ) }}"
   loop: "{{ minikube_profiles | dict2items }}"
   loop_control:
     label: "{{ item.key }}"
   vars:
     profile_names: "{{ minikube_profiles_json | json_query(profile_name_query) }}"
+  when: minikube_profiles_json is defined
 
 - name: "Debug::Minikube Clusters Config"
   debug:
@@ -65,10 +76,14 @@
     KUBECONFIG: "{{ kubeconfig_dir }}/{{ item.key }}.kubeconfig"
   when: (item.value.create | bool) and not ( item.value.destroy | bool )
 
+- name: "minikube start result"
+  debug:
+    var: minikube_start_result
+
 - name: "Fail when cluster not started"
   fail:
     msg: "Unable to start minikube"
-  when: minikube_start_result.changed and item.rc != 0
+  when: item.changed and minikube_start_result.changed and item.rc != 0
   loop: "{{ minikube_start_result.results }}"
   loop_control:
     label: "{{ item.item.key }}"
@@ -78,8 +93,8 @@
     path: "{{ kubeconfig_dir }}"
   register: kubeconfig_dir_result
 
-- debug:
-    var: kubeconfig_dir_result
+# - debug:
+#     var: kubeconfig_dir_result
 
 - name: "Merge Kubconfig"
   set_fact: 

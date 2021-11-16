@@ -8,11 +8,11 @@
 ###################################
 # Create
 ###################################
-- name: 'Create minikube {{ minikube_profile_name }} Cluster'
+- name: 'Create minikube Cluster(s)'
   include_tasks: minikube_create.yml
 
 ###################################
 # Destroy
 ###################################
-- name: 'Destroy minikube {{ minikube_profile_name }} Cluster'
+- name: 'Destroy minikube Cluster(s)'
   include_tasks: minikube_destroy.yml
