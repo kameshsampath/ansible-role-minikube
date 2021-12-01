@@ -1,5 +1,13 @@
 # Changelog
 
+### [0.1.1](https://www.github.com/kameshsampath/ansible-role-minikube/compare/v0.1.0...v0.1.1) (2021-12-01)
+
+
+### Bug Fixes
+
+* metadata ([be7088a](https://www.github.com/kameshsampath/ansible-role-minikube/commit/be7088aaeb3167bdb8898d0ebabba0a479ad5323))
+* notify galaxy to refresh on release ([e278c33](https://www.github.com/kameshsampath/ansible-role-minikube/commit/e278c337af60b3a7e81d27abfe23ec6502eca86e))
+
 ## 0.1.0 (2021-12-01)
 
 
