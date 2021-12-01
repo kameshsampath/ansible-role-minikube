@@ -1,0 +1,44 @@
+- name: "Create minikube Clusters"
+  hosts: all
+  vars:
+    # the demo work directory
+    work_dir: "{{ playbook_dir }}/work"
+    # the kubeconfig directory
+    kubeconfig_dir: "{{ work_dir }}/.kube"
+    # the kubernetes version to use with minikube
+    minikube_kubernetes_version: v1.21.6
+    # the minikube home directory
+    minikube_home_dir: "{{ work_dir }}/.minikube"
+    # minikube profiles
+    minikube_profiles:
+      mgmt: # profile name and Kubernetes context name
+        create: yes
+        destroy: no
+        memory: 16g # override the default memory, note the attribute name without prefix _minikube
+        addons:
+          - metallb
+        lbStartIP: 192.168.64.80
+        lbEndIP: 192.168.64.90
+      cluster1: # profile name and Kubernetes context name
+        create: yes
+        destroy: no
+        addons:
+          - metallb
+        lbStartIP: 192.168.64.110
+        lbEndIP: 192.168.64.120
+  roles:
+    - role: kameshsampath.minikube
+  
+  # Some extra configurations
+  tasks:
+    - name: "Configure metallb"
+      ansible.builtin.expect:
+        command: "{{ minikube_binary }} -p {{ item.key }} addons configure metallb"
+        responses:
+          "-- Enter Load Balancer Start IP:": "{{ item.value.lbStartIP}}"
+          "-- Enter Load Balancer End IP:": "{{ item.value.lbEndIP}}"
+      loop: "{{ minikube_profiles | dict2items }}"
+      loop_control:
+         label: "{{ item.key }}"
+      register: lb_setup_result
+      when: item.value.create and not item.value.destroy

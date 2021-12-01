@@ -1,0 +1,16 @@
+exclude_paths:
+- .cache/  # implicit unless exclude_paths is defined in config
+- .github/
+- .venv
+- .git
+
+loop_var_prefix: "{role}_"
+
+use_default_rules: true
+
+skip_list:
+  - skip_this_tag
+  - git-latest
+
+warn_list:
+  - internal-error

@@ -64,7 +64,7 @@
       - "--cpus={{ item.value.cpus | default(minikube_default_cpus) }}"
       - "--disk-size={{ item.value.disk_size | default(minikube_default_disk_size) }}"
       - "--delete-on-failure=true"
-      - "--driver={{ minikube_driver }}"
+      - "--driver={{ item.value.driver | default(minikube_driver) }}"
       - "--insecure-registry=10.0.0.0/24"
       - --kubernetes-version={{ kubernetes_version | default(minikube_kubernetes_version) }}
       - "--service-cluster-ip-range={{ item.value.service_cluster_ip_range | default(minikube_service_cluster_ip_range) }}"
@@ -136,5 +136,3 @@
   loop_control:
     label: "Enabling addon '{{ item.1}}' on '{{ item.0.key }}'"
   when:  ( ( item.0.value.create | bool ) and not ( item.0.value.destroy | bool ) ) or force_enable_addon
-  environment:
-    KUBECONFIG: "{{ playbook_dir }}/.kube/{{ item.0.key }}.kubeconfig"

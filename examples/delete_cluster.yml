@@ -1,0 +1,22 @@
+- name: "Delete minikube Cluster(s)"
+  hosts: all
+  vars:
+    # the demo work directory
+    work_dir: "{{ playbook_dir }}/work"
+    # the kubeconfig directory
+    kubeconfig_dir: "{{ work_dir }}/.kube"
+    # the kubernetes version to use with minikube
+    minikube_kubernetes_version: v1.21.6
+    # the minikube home directory
+    minikube_home_dir: "{{ work_dir }}/.minikube"
+    # minikube profiles
+    minikube_profiles:
+      mgmt: # profile name and Kubernetes context name
+        create: no
+        destroy: yes
+      cluster1: # profile name and Kubernetes context name
+        create: no
+        destroy: yes
+  roles:
+    - role: kameshsampath.minikube
+  

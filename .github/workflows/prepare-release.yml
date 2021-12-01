@@ -1,0 +1,22 @@
+name: Prepare Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  prepare-release:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout
+        id: git_checkout
+        uses: actions/checkout@v2
+
+      - uses: GoogleCloudPlatform/release-please-action@v2.24.1
+        id: release
+        with:
+          token: ${{ secrets.GH_WORKFLOW_PAT }}
+          release-type: simple
+          bump-minor-pre-major: true

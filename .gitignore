@@ -1,4 +1,6 @@
-contour.yaml
-contour copy.yaml
 playbook.yml
+test.yml
+work
 .vagrant
+.venv
+.kube

@@ -1,6 +1,6 @@
 ---
-minikube_version: v1.23.2
-minikube_home_dir: "{{ansible_env.HOME}}/.minikube"
+minikube_version: v1.24.0
+minikube_home_dir: "{{ playbook_dir  }}/.minikube"
 minikube_create: True
 minikube_driver: hyperkit
 minikube_default_memory: 8g

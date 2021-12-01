@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "ansible-role-minikube"
+version = "0.1.0"
+description = "Ansible role for creating minikueb clusters"
+authors = ["Kamesh Sampath <kamesh.sampath@hotmail.com>"]
+license = "GPL"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+ansible = "^5.0.0"
+kubernetes = "^20.13.0"
+jsonpatch = "^1.32"
+jmespath = "^0.10.0"
+mkdocs-material = "^8.0.2"
+mkdocs = "^1.2.3"
+ansible-lint = "^5.3.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

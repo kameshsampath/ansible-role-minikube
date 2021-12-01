@@ -1,0 +1,51 @@
+site_name: 'Ansible Role for minikube'
+site_url: https://kameshsampath.github.com/ansible-role-minikube
+theme:
+  name: material
+  font:
+    text: Red Hat Display
+  features:
+    - content.code.annotate
+    - content.tabs.link
+  highlightjs: true
+  hljs_languages:
+    - yaml
+    - yml
+    - shell
+    - bash
+    - javascript
+nav:
+  - 'Overview': "index.md"
+  
+markdown_extensions:
+  - toc:
+      baselevel: 1
+      permalink: "&para;"
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - meta
+  - smarty
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.critic:
+      mode: view
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.highlight
+  - pymdownx.mark
+  - pymdownx.tabbed
+  - pymdownx.tilde
+  - pymdownx.smartsymbols
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.highlight:
+      linenums_style: pymdownx-inline
+
