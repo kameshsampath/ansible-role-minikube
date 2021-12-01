@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.1.2](https://www.github.com/kameshsampath/ansible-role-minikube/compare/v0.1.1...v0.1.2) (2021-12-01)
+
+
+### Bug Fixes
+
+* add webhook secret to payload ([099c746](https://www.github.com/kameshsampath/ansible-role-minikube/commit/099c746d92449cb884cc9678c14edbd1861d89e8))
+
 ### [0.1.1](https://www.github.com/kameshsampath/ansible-role-minikube/compare/v0.1.0...v0.1.1) (2021-12-01)
 
 
