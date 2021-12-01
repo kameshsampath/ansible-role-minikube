@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.1.1](https://www.github.com/kameshsampath/ansible-role-minikube/compare/v0.1.0...v0.1.1) (2021-12-01)
+
+
+### Bug Fixes
+
+* metadata ([be7088a](https://www.github.com/kameshsampath/ansible-role-minikube/commit/be7088aaeb3167bdb8898d0ebabba0a479ad5323))
+
 ## 0.1.0 (2021-12-01)
 
 
