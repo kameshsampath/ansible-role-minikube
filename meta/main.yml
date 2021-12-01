@@ -1,7 +1,7 @@
 galaxy_info:
   role_name: minikube
   author: kameshsampath
-  description: Ansible role to install KinD and spice it up with additional components like Knative, Tekton , Ingress etc.,
+  description: Ansible role to create and configure minikube clusters.
 
   license_file: 'LICENSE'
 
@@ -11,6 +11,9 @@ galaxy_info:
     - name: EL
       versions:
       - all
+    - name: RedHat
+      versions:
+      - all
     - name: Debian
       versions:
       - all
@@ -18,10 +21,6 @@ galaxy_info:
       versions:
       - all
   galaxy_tags:
-    - kind
     - kubernetes
-    - docker
-    - knative
-    - tekton
-    - contour
+    - minikube
 dependencies: []
