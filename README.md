@@ -12,7 +12,13 @@ pipx install poetry
 make shell-env
 ```
 
-Check out the HTML documentation [Ansible role for Minikube](https://kameshsampath.github.io/ansible-role-minikube/)
+## Quick Install
+
+```shell
+ansible-galaxy install kameshsampath.minikube
+```
+
+Check out the HTML documentation [Ansible role for Minikube](https://kameshsampath.github.io/ansible-role-minikube/) for examples and configurations.
 
 ## License
 
