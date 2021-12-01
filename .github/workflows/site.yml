@@ -38,9 +38,4 @@ jobs:
           publish_dir: "${{ env.SITE_DIR }}"
           publish_branch: "gh-pages"          
           full_commit_message: "[Release]${{ github.event.head_commit.message }}"
-      - name: "Notify Ansible Galaxy"
-        uses: distributhor/workflow-webhook@v2.0.2
-        env: 
-          webhook_url: "https://galaxy.ansible.com/api/v1/notifications/"
-          webhook_secret: "xxxx"
 
