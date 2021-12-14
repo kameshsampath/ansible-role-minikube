@@ -96,11 +96,36 @@
 # - debug:
 #     var: kubeconfig_dir_result
 
+- name: "Exapnd Certificate Data in kubeconfig"
+  ansible.builtin.command:
+    argv:
+      - kubectl
+      - config
+      - --kubeconfig={{ item }}
+      - view
+      - --flatten
+  with_fileglob:
+    - "{{ kubeconfig_dir +'/*.kubeconfig' }}"
+  register: kubeconfig_flatten_result
+
+#- debug:
+#    var: kubeconfig_flatten_result
+    
+- name: "Save Exapanded kubeconfig"
+  ansible.builtin.copy:
+    dest: "{{ kubeconfig_file_item.item }}"
+    content: |
+        {{ kubeconfig_file_item.stdout | from_yaml | to_nice_yaml(indent=2) }}
+  loop: "{{ kubeconfig_flatten_result.results }}"
+  loop_control:
+    label: "{{ kubeconfig_file_item.item  | basename }}"
+    loop_var: kubeconfig_file_item
+    
 - name: "Merge Kubconfig"
   set_fact: 
     kubeconfig: "{{ lookup('fileglob', kubeconfig_dir +'/*.kubeconfig') | regex_replace(',',':') }}"
   when: kubeconfig_dir_result.stat.exists
-
+  
 - name: "Merge and Flatten Kubeconfig"
   local_action:
     module: ansible.builtin.command
