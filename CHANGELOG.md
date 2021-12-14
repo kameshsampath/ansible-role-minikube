@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.1.3](https://www.github.com/kameshsampath/ansible-role-minikube/compare/v0.1.2...v0.1.3) (2021-12-14)
+
+
+### Bug Fixes
+
+* flatten kubeconfig ([aa6cfd5](https://www.github.com/kameshsampath/ansible-role-minikube/commit/aa6cfd5ac45dc76986ea47ffe29fd41dab71e10e))
+
 ### [0.1.2](https://www.github.com/kameshsampath/ansible-role-minikube/compare/v0.1.1...v0.1.2) (2021-12-01)
 
 
